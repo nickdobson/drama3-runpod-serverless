@@ -10,11 +10,12 @@ served with [SGLang-Omni](https://github.com/sgl-project/sglang-omni). `handler.
 |---|---|---|
 | Source | GitHub → this repo, branch `main`, Dockerfile `Dockerfile` | |
 | Type | Queue | |
-| GPU | 80 GB Hopper: H100 (`ADA_80_PRO`), H200 (`HOPPER_141`) as fallback | 37.0 GB of weights in the engine's 0.70 memory share needs ≥ 53 GB; plus the vocoder (0.10) and the 6 GiB preprocessing reserve |
+| GPU | RTX PRO 6000 96 GB (`BLACKWELL_96`), H100 80 GB (`ADA_80_PRO`) | 37.0 GB of weights in the engine's 0.70 memory share needs ≥ 53 GB; plus the vocoder (0.10) and the 6 GiB preprocessing reserve |
+| Data centers | US-NC-1, US-NC-2, US-KS-2, US-NE-1, US-CA-2 | image and cached model live per host; fewer data centers means more cold starts land on a host that already has them |
 | Min CUDA | 13.0 | base image is torch 2.14 / CUDA 13 |
 | Model (cached models) | `fishaudio/drama-3` | 41.5 GB of weights staged on the host, not downloaded at boot |
 | Container disk | 80 GB | only used if the cached model is missing and sgl-omni downloads it |
-| Workers | min 0, max 1 | scale to zero |
+| Workers | min 0, max 1, idle timeout 300 s | scale to zero; a worker stays up 5 min after its last job so bursts skip the cold start |
 | Execution timeout | 600 s | |
 | FlashBoot | on | |
 
